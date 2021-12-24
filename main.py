@@ -5,13 +5,10 @@ from read_brw import ReadBrw
 from read_dat import read_dat
 from create_bwr import create_bwr
 
-# Press Umschalt+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
+# pip install -r requirements.txt
 
 
 def convert(path_dat, file_name):
-    # brw_data = ReadBrw("/mnt/HDD/FauBox/Uni/Master/PyCharm/mat2brw/Brw/HD14_15s_9kHz.brw")  # 555622400
-
     V4 = np.dtype([('Row', '<i2'), ('Col', '<i2')])
     V16 = np.dtype([('Major', '<i4'), ('Minor', '<i4'), ('Build', '<i4'), ('Revision', '<i4')])
     V16_2 = np.dtype([('Title', h5py.special_dtype(vlen=str)), ('Value', h5py.special_dtype(vlen=str))])
@@ -82,7 +79,7 @@ def convert(path_dat, file_name):
 if __name__ == '__main__':
     print("Starting")
     # brw_data = ReadBrw("/mnt/HDD/FauBox/Uni/Master/PyCharm/mat2brw/Brw/1min 9000Hz.brw") # 555622400
-    convert("/mnt/HDD/FauBox/Uni/Master/PyCharm/mat2brw/Messung02.11.2020_10-59-15 GUT.dat", "/mnt/HDD/VirtualBox/Windows 10/shared/dat2brw.brw")
+    convert("/mnt/HDD/FauBox/Uni/Master/PyCharm/mat2brw_v1/Messung02.11.2020_10-59-15 GUT.dat", "/mnt/HDD/VirtualBox/Windows 10/shared/dat2brw.brw")
     # brw_data_me = ReadBrw("/mnt/HDD/dat2brw.brw")
     # path_brw = "/mnt/HDD/FauBox/Uni/Master/PyCharm/mat2brw/Brw/HD14_15s_9kHz.brw"
 
@@ -90,5 +87,3 @@ if __name__ == '__main__':
     # brw_data_me = h5py.File("/mnt/HDD/dat2brw.brw", 'r')
     print("Finished")
 
-
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/

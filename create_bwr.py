@@ -61,3 +61,5 @@ def create_bwr(file_name, Raw, Layout, MeaType, NCols, NRows, ROIs, SysChs, Chs,
         user_info_exp_markers = user_info_grp.create_dataset("ExpMarkers", data=ExpMarkers)
         user_info_exp_notes = user_info_grp.create_dataset("ExpNotes", data=ExpNotes)
         print("Finished creating .bwr file")
+
+        f.close()
