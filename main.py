@@ -4,11 +4,14 @@ import scipy.io
 from read_brw import ReadBrw
 from read_dat import read_dat
 from create_bwr import create_bwr
+from bwr_test import create_bwr_test
 
 # pip install -r requirements.txt
 
 
 def convert(path_dat, file_name):
+    brw_data = ReadBrw("/mnt/HDD/VirtualBox/Windows 10/shared/1min 9000Hz.brw")
+
     V4 = np.dtype([('Row', '<i2'), ('Col', '<i2')])
     V16 = np.dtype([('Major', '<i4'), ('Minor', '<i4'), ('Build', '<i4'), ('Revision', '<i4')])
     V16_2 = np.dtype([('Title', h5py.special_dtype(vlen=str)), ('Value', h5py.special_dtype(vlen=str))])
@@ -28,14 +31,15 @@ def convert(path_dat, file_name):
                       'offsets': [0, 4, 12, 20, 28],
                       'itemsize': 36})
 
-
     data, meta = read_dat(path_dat)
     rec_dur = data.iloc[:, 0].max() # Recording Duration
     SaRa = meta[2] # Sample Rate
     data_raw = data.iloc[:, 1:].to_numpy()
-    brw_array = np.zeros(shape=(data_raw.shape[0], 4096), dtype="uint16")
+    # data_raw = data_raw / data_raw.max()  # normalizes data in range 0 - 255
+    data_raw = np.abs(data_raw * 1000) # TODO: float64 to uint16 noch nicht geklärt
+    brw_array = np.zeros(shape=(data_raw.shape[0], 4096), dtype="uint16") # TODO: move to the middle 64:64
     x = 0
-    y = 0
+    y = 0 #TODO: change y to something else
     brw_array[x:x + data_raw.shape[0], y:y + data_raw.shape[1]] = data_raw
     # brw_length = data_raw.shape[0] * 4096
     brw_array_one_dim = brw_array.reshape(-1)
@@ -58,7 +62,7 @@ def convert(path_dat, file_name):
     BitDepth = np.array([12], dtype=np.uint8)
     MaxVolt = np.array([data_raw.max()])
     MinVolt = np.array([data_raw.min()])
-    NRecFrames_float = Raw.shape[0] / (NCols[0] * NRows[0]) #@TODO: Check NRecFrames, seems like wrong factor 1000
+    NRecFrames_float = Raw.shape[0] / (NCols[0] * NRows[0])
     NRecFrames = np.ones(shape=(1,), dtype="i8")
     NRecFrames[0] = NRecFrames_float
     SamplingRate = np.ones(shape=(1,), dtype="f8")
@@ -68,6 +72,9 @@ def convert(path_dat, file_name):
     ExpMarkers = np.empty(shape=(0,), dtype=V36_2)
     ExpNotes = np.empty(shape=(0,), dtype=V16_2)
     ExpNotes = np.array(([(b'Remarks', b'')]), dtype=V16_2)
+
+    z1 = np.array(brw_data.file["3BData/Raw"]).reshape((brw_data.file["3BRecInfo/3BRecVars/NRecFrames"][0], 4096))
+    # brw_data.file["3BData/Raw"][1 * 4096]
     create_bwr(file_name, Raw, Layout, MeaType, NCols, NRows, ROIs, SysChs, Chs, FwVersion, HwVersion, System, BitDepth,
                MaxVolt, MinVolt, NRecFrames, SamplingRate, SignalInversion, ExpMarkers, ExpNotes)
     # current_length = data_raw_one_dim.shape[0]
@@ -78,12 +85,9 @@ def convert(path_dat, file_name):
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
     print("Starting")
-    # brw_data = ReadBrw("/mnt/HDD/FauBox/Uni/Master/PyCharm/mat2brw/Brw/1min 9000Hz.brw") # 555622400
-    convert("/mnt/HDD/FauBox/Uni/Master/PyCharm/mat2brw_v1/Messung02.11.2020_10-59-15 GUT.dat", "/mnt/HDD/VirtualBox/Windows 10/shared/dat2brw.brw")
-    # brw_data_me = ReadBrw("/mnt/HDD/dat2brw.brw")
-    # path_brw = "/mnt/HDD/FauBox/Uni/Master/PyCharm/mat2brw/Brw/HD14_15s_9kHz.brw"
-
-    # brw_data = h5py.File("/mnt/HDD/FauBox/Uni/Master/PyCharm/mat2brw/Brw/1min 9000Hz.brw", 'r')
-    # brw_data_me = h5py.File("/mnt/HDD/dat2brw.brw", 'r')
+    brw_data = ReadBrw("/mnt/HDD/VirtualBox/Windows 10/shared/1min 9000Hz.brw") # 555622400
+    #convert("/mnt/HDD/FauBox/Uni/Master/PyCharm/mat2brw_v1/Messung02.11.2020_10-59-15 GUT.dat", "/mnt/HDD/VirtualBox/Windows 10/shared/dat2brw_V4.brw")
+    # create_bwr_test()
+    #brw_data_me = ReadBrw("/mnt/HDD/VirtualBox/Windows 10/shared/dat2brw.brw")
     print("Finished")
 
