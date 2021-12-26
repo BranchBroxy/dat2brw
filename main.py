@@ -42,6 +42,19 @@ def convert(path_dat, file_name):
     y = 0 #TODO: change y to something else
     brw_array[x:x + data_raw.shape[0], y:y + data_raw.shape[1]] = data_raw
     # brw_length = data_raw.shape[0] * 4096
+
+    hop = 0
+    for zeilen in range(8):
+
+        for spalten in range(8):
+            alte_pos = spalten + zeilen * 8
+            neue_pos = 1755 + spalten + hop
+            temp = np.copy(brw_array[:, alte_pos])
+            brw_array[:, alte_pos] = brw_array[:, neue_pos]
+            brw_array[:, neue_pos] = temp
+        hop = hop + 64
+
+
     brw_array_one_dim = brw_array.reshape(-1)
     Raw = brw_array_one_dim
     Layout = np.ones(shape=(64,64), dtype="uint8")
@@ -86,7 +99,7 @@ def convert(path_dat, file_name):
 if __name__ == '__main__':
     print("Starting")
     brw_data = ReadBrw("/mnt/HDD/VirtualBox/Windows 10/shared/1min 9000Hz.brw") # 555622400
-    #convert("/mnt/HDD/FauBox/Uni/Master/PyCharm/mat2brw_v1/Messung02.11.2020_10-59-15 GUT.dat", "/mnt/HDD/VirtualBox/Windows 10/shared/dat2brw_V4.brw")
+    convert("/mnt/HDD/FauBox/Uni/Master/PyCharm/mat2brw_v1/Messung02.11.2020_10-59-15 GUT.dat", "/mnt/HDD/VirtualBox/Windows 10/shared/dat2brw_V7.brw")
     # create_bwr_test()
     #brw_data_me = ReadBrw("/mnt/HDD/VirtualBox/Windows 10/shared/dat2brw.brw")
     print("Finished")
