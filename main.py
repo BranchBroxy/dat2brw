@@ -37,22 +37,38 @@ def convert(path_dat, file_name):
     data_raw = data.iloc[:, 1:].to_numpy()
     # data_raw = data_raw / data_raw.max()  # normalizes data in range 0 - 255
     data_raw = np.abs(data_raw * 1000) # TODO: float64 to uint16 noch nicht geklärt
-    brw_array = np.zeros(shape=(data_raw.shape[0], 4096), dtype="uint16") # TODO: move to the middle 64:64
+    brw_array = np.zeros(shape=(data_raw.shape[0], 4096), dtype="uint16")
     x = 0
-    y = 0 #TODO: change y to something else
+    y = 0
     brw_array[x:x + data_raw.shape[0], y:y + data_raw.shape[1]] = data_raw
     # brw_length = data_raw.shape[0] * 4096
 
     hop = 0
-    for zeilen in range(8):
+    alte_pos = 0
 
+    for erstezeile in range(6):
+        neue_pos = 1756 + erstezeile
+        temp = np.copy(brw_array[:, alte_pos])
+        brw_array[:, alte_pos] = brw_array[:, neue_pos]
+        brw_array[:, neue_pos] = temp
+        alte_pos = alte_pos + 1
+
+    for zeilen in range(6):
         for spalten in range(8):
-            alte_pos = spalten + zeilen * 8
-            neue_pos = 1755 + spalten + hop
+            # alte_pos = spalten + zeilen * 8
+            neue_pos = 1819 + spalten + hop
             temp = np.copy(brw_array[:, alte_pos])
             brw_array[:, alte_pos] = brw_array[:, neue_pos]
             brw_array[:, neue_pos] = temp
+            alte_pos = alte_pos + 1
         hop = hop + 64
+
+    for letztezeile in range(6):
+        neue_pos = 2204 + letztezeile
+        temp = np.copy(brw_array[:, alte_pos])
+        brw_array[:, alte_pos] = brw_array[:, neue_pos]
+        brw_array[:, neue_pos] = temp
+        alte_pos = alte_pos + 1
 
 
     brw_array_one_dim = brw_array.reshape(-1)
