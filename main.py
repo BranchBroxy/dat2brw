@@ -47,7 +47,7 @@ def convert(path_dat, file_name):
     alte_pos = 0
 
     for erstezeile in range(6):
-        neue_pos = 1756 + erstezeile
+        neue_pos = 1757 + erstezeile
         temp = np.copy(brw_array[:, alte_pos])
         brw_array[:, alte_pos] = brw_array[:, neue_pos]
         brw_array[:, neue_pos] = temp
@@ -56,7 +56,7 @@ def convert(path_dat, file_name):
     for zeilen in range(6):
         for spalten in range(8):
             # alte_pos = spalten + zeilen * 8
-            neue_pos = 1819 + spalten + hop
+            neue_pos = 1820 + spalten + hop
             temp = np.copy(brw_array[:, alte_pos])
             brw_array[:, alte_pos] = brw_array[:, neue_pos]
             brw_array[:, neue_pos] = temp
@@ -64,7 +64,7 @@ def convert(path_dat, file_name):
         hop = hop + 64
 
     for letztezeile in range(6):
-        neue_pos = 2204 + letztezeile
+        neue_pos = 2205 + letztezeile
         temp = np.copy(brw_array[:, alte_pos])
         brw_array[:, alte_pos] = brw_array[:, neue_pos]
         brw_array[:, neue_pos] = temp
@@ -114,7 +114,7 @@ def convert(path_dat, file_name):
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
     print("Starting")
-    brw_data = ReadBrw("/mnt/HDD/VirtualBox/Windows 10/shared/1min 9000Hz.brw") # 555622400
+    #brw_data = ReadBrw("/mnt/HDD/VirtualBox/Windows 10/shared/1min 9000Hz.brw") # 555622400
     convert("/mnt/HDD/FauBox/Uni/Master/PyCharm/mat2brw_v1/Messung02.11.2020_10-59-15 GUT.dat", "/mnt/HDD/VirtualBox/Windows 10/shared/dat2brw_V7.brw")
     # create_bwr_test()
     #brw_data_me = ReadBrw("/mnt/HDD/VirtualBox/Windows 10/shared/dat2brw.brw")
