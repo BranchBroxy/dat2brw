@@ -36,7 +36,7 @@ def convert(path_dat, file_name):
     SaRa = meta[2] # Sample Rate
     data_raw = data.iloc[:, 1:].to_numpy()
     # data_raw = data_raw / data_raw.max()  # normalizes data in range 0 - 255
-    data_raw = np.abs(data_raw * 1000) # TODO: float64 to uint16 noch nicht geklärt
+    data_raw = np.abs(data_raw * 10) # TODO: float64 to uint16 noch nicht geklärt
     brw_array = np.zeros(shape=(data_raw.shape[0], 4096), dtype="uint16")
     x = 0
     y = 0
