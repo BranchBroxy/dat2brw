@@ -1,16 +1,17 @@
 import numpy as np
 import h5py  # hdf5
 import scipy.io
-from read_brw import ReadBrw
 from read_dat import read_dat
-from create_bwr import create_bwr
+from bwr import create_bwr, read_brw
 from bwr_test import create_bwr_test
+
+import matplotlib.pyplot as plt
 
 # pip install -r requirements.txt
 
 
 def convert(path_dat, file_name):
-    brw_data = ReadBrw("/mnt/HDD/VirtualBox/Windows 10/shared/1min 9000Hz.brw")
+    brw_data = read_brw("/mnt/HDD/VirtualBox/Windows 10/shared/1min 9000Hz.brw")
 
     V4 = np.dtype([('Row', '<i2'), ('Col', '<i2')])
     V16 = np.dtype([('Major', '<i4'), ('Minor', '<i4'), ('Build', '<i4'), ('Revision', '<i4')])
@@ -36,13 +37,14 @@ def convert(path_dat, file_name):
     SaRa = meta[2] # Sample Rate
     data_raw = data.iloc[:, 1:].to_numpy()
     # data_raw = data_raw / data_raw.max()  # normalizes data in range 0 - 255
-    data_raw = np.abs(data_raw * 10) # TODO: float64 to uint16 noch nicht geklärt
+    data_raw = (data_raw * 10) # TODO: float64 to uint16 noch nicht geklärt
+    data_raw = data_raw + 2000
     brw_array = np.zeros(shape=(data_raw.shape[0], 4096), dtype="uint16")
     x = 0
     y = 0
     brw_array[x:x + data_raw.shape[0], y:y + data_raw.shape[1]] = data_raw
     # brw_length = data_raw.shape[0] * 4096
-
+    brw_array = np.where(brw_array==0, 2000, brw_array)
     hop = 0
     alte_pos = 0
 
@@ -102,7 +104,7 @@ def convert(path_dat, file_name):
     ExpNotes = np.empty(shape=(0,), dtype=V16_2)
     ExpNotes = np.array(([(b'Remarks', b'')]), dtype=V16_2)
 
-    z1 = np.array(brw_data.file["3BData/Raw"]).reshape((brw_data.file["3BRecInfo/3BRecVars/NRecFrames"][0], 4096))
+    #z1 = np.array(brw_data.file["3BData/Raw"]).reshape((brw_data.file["3BRecInfo/3BRecVars/NRecFrames"][0], 4096))
     # brw_data.file["3BData/Raw"][1 * 4096]
     create_bwr(file_name, Raw, Layout, MeaType, NCols, NRows, ROIs, SysChs, Chs, FwVersion, HwVersion, System, BitDepth,
                MaxVolt, MinVolt, NRecFrames, SamplingRate, SignalInversion, ExpMarkers, ExpNotes)
@@ -114,9 +116,19 @@ def convert(path_dat, file_name):
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
     print("Starting")
-    #brw_data = ReadBrw("/mnt/HDD/VirtualBox/Windows 10/shared/1min 9000Hz.brw") # 555622400
-    convert("/mnt/HDD/FauBox/Uni/Master/PyCharm/mat2brw_v1/Messung02.11.2020_10-59-15 GUT.dat", "/mnt/HDD/VirtualBox/Windows 10/shared/dat2brw_V7.brw")
-    # create_bwr_test()
-    #brw_data_me = ReadBrw("/mnt/HDD/VirtualBox/Windows 10/shared/dat2brw.brw")
+    # brw_data = ReadBrw("/mnt/HDD/VirtualBox/Windows 10/shared/1min 9000Hz.brw") # 555622400
+    convert("/mnt/HDD/FauBox/Uni/Master/PyCharm/mat2brw_v1/Messung02.11.2020_10-59-15 GUT.dat", "/mnt/HDD/VirtualBox/Windows 10/shared/dat2brw_V9.brw")
+    #create_bwr_test()
+    # z1 = np.array(brw_data.file["3BData/Raw"]).reshape((brw_data.file["3BRecInfo/3BRecVars/NRecFrames"][0], 4096))
+    # mean = np.mean(z1)
+    # z1 = np.where(z1 == 4095, 2040, z1)
+    # mean1 = np.mean(z1)
+
+    #brw_data_me = ReadBrw("/mnt/HDD/VirtualBox/Windows 10/shared/dat2brw_V7.brw")
+    #z1 = np.array(brw_data_me.file["3BData/Raw"]).reshape((brw_data_me.file["3BRecInfo/3BRecVars/NRecFrames"][0], 4096))
+    #z2 = np.array(brw_data_me.file["3BData/Raw"]).reshape((brw_data_me.file["3BRecInfo/3BRecVars/NRecFrames"][0], 4096))
+
+    #plt.plot(z1[:, 0:2])
+    #plt.show()
     print("Finished")
 

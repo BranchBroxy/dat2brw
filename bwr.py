@@ -1,8 +1,11 @@
 import h5py
 import numpy as np
+import os
 
 def create_bwr(file_name, Raw, Layout, MeaType, NCols, NRows, ROIs, SysChs, Chs, FwVersion, HwVersion, System, BitDepth, MaxVolt, MinVolt, NRecFrames, SamplingRate, SignalInversion, ExpMarkers, ExpNotes):
-    file = h5py.File("/mnt/HDD/VirtualBox/Windows 10/shared/1min 9000Hz.brw", 'r')
+    path = os.getcwd()
+    path = path + "/Brw/empty.brw"
+    file = h5py.File(path, 'r')
     with h5py.File(file_name, "w") as f:
         print("Start creating .bwr file")
         data_grp = f.create_group("3BData")
@@ -16,16 +19,8 @@ def create_bwr(file_name, Raw, Layout, MeaType, NCols, NRows, ROIs, SysChs, Chs,
         f.attrs["Version"] = file.attrs["Version"]
         f.attrs["Description"] = file.attrs["Description"]
         f.attrs["GUID"] = file.attrs["GUID"]
-        # f.attrs["Version"] = 211
-        # f.attrs["Description"] = b'BXR-File Level2 - 3Brain eXperiment Results file for high resolution MEA platform, HDF5-format - Created with BrainWave v.4.4.7998.22458 on date Wednesday, December 1, 2021'
-        # f.attrs["GUID"] = b'982c7143-2982-4624-b8c3-4593b93fd330'
 
-        # Description = 'BXR-File Level2 - 3Brain eXperiment Results file for high resolution MEA platform, HDF5-format - Created with BrainWave v.4.4.7998.22458 on date Wednesday, December 1, 2021'
-
-        # f.attrs.create(name="Version", data=211, shape=None, dtype=np.int32)
-        # TODO: Datatypes of Description and GUID are not right
-        # f.attrs.create(name="Description", data=Description,shape=None, dtype=h5py.special_dtype(vlen=str))
-        # f.attrs.create(name="GUID", data='982c7143-2982-4624-b8c3-4593b93fd330',shape=None, dtype=h5py.string_dtype('ascii'))
+        # TODO: make own Version and Description
 
         #########################################################
         ####################3BData############################
@@ -83,3 +78,12 @@ def create_bwr(file_name, Raw, Layout, MeaType, NCols, NRows, ROIs, SysChs, Chs,
         print("Finished creating .bwr file")
 
     #f.close()
+
+
+class read_brw:
+    def __init__(self, path):
+        self.file = h5py.File(path, 'r')
+        self.raw = self.file["3BData/Raw"]
+
+        self.sf = self.file['3BRecInfo/3BRecVars/SamplingRate'][()][0]
+        self.recLenght = self.file['3BRecInfo/3BRecVars/NRecFrames'][0] / self.sf
