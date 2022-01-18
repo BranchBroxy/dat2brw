@@ -6,6 +6,8 @@ from bwr import create_bwr, read_brw
 
 
 # pip install -r requirements.txt
+# conda env create -f environment.yml
+
 
 
 def convert(path_dat, file_name):
