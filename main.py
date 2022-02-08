@@ -1,12 +1,12 @@
 import numpy as np
 import h5py  # hdf5
-import scipy.io
 from read_dat import read_dat
-from bwr import create_bwr, read_brw
+from bwr import create_bwr
 
 
-# pip install -r requirements.txt
+# Type in these two commands:
 # conda env create -f environment.yml
+# conda activate mat2brw
 
 
 
@@ -36,8 +36,28 @@ def convert(path_dat, file_name):
     SaRa = meta[2] # Sample Rate
 
     data_raw = data.iloc[:, 1:].to_numpy()
-    data_raw = (data_raw * 10) # TODO: float64 to uint16 noch nicht geklärt
-    data_raw = data_raw + 2000
+    # data_raw = (data_raw * 10) # TODO: float64 to uint16 noch nicht geklärt
+    # data_raw = data_raw + 2000
+
+    """
+    function [m]=digital2analog_sh(M,raw)
+    Bit=raw.BitDepth;
+    MxV=raw.MaxVolt;
+    SIV=raw.SignalInversion;
+    m = single(M);
+    m=SIV*(m-(2^Bit)/2)*(MxV*2/2^Bit);
+end
+    """
+
+    Bit = 12
+    MxV = data_raw.max()
+    SIV = 1
+    # m = single(M);
+    # m = SIV * (m - (2 ^ Bit) / 2) * (MxV * 2 / 2 ^ Bit)
+
+    brw_data = data_raw/(SIV*(2*MxV/2**Bit))+(2**Bit)/2
+    data_raw = brw_data
+
 
     brw_array = np.zeros(shape=(data_raw.shape[0], 4096), dtype="uint16")
     x = 0
