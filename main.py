@@ -8,6 +8,8 @@ from bwr import create_bwr
 # conda env create -f environment.yml
 # conda activate mat2brw
 
+# test com
+
 
 
 def convert(path_dat, file_name):
