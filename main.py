@@ -1,14 +1,14 @@
 import numpy as np
 import h5py  # hdf5
 from read_dat import read_dat
-from bwr import create_bwr
+from bwr import create_bwr, read_brw
 
 
 # Type in these two commands:
 # conda env create -f environment.yml
 # conda activate mat2brw
 
-# test com
+
 
 
 
@@ -57,16 +57,17 @@ end
     # m = single(M);
     # m = SIV * (m - (2 ^ Bit) / 2) * (MxV * 2 / 2 ^ Bit)
 
-    brw_data = data_raw/(SIV*(2*MxV/2**Bit))+(2**Bit)/2
-    data_raw = brw_data
+    # brw_data = data_raw/(SIV*(2*MxV/2**Bit))+(2**Bit)/2
+    brw_data = ((data_raw * (2 ** Bit)) / (SIV * 2 * MxV)) + ((2 ** Bit) / 2)
+    # data_raw = brw_data
 
 
     brw_array = np.zeros(shape=(data_raw.shape[0], 4096), dtype="uint16")
     x = 0
     y = 0
-    brw_array[x:x + data_raw.shape[0], y:y + data_raw.shape[1]] = data_raw
+    brw_array[x:x + data_raw.shape[0], y:y + data_raw.shape[1]] = brw_data
     # brw_length = data_raw.shape[0] * 4096
-    brw_array = np.where(brw_array==0, 2000, brw_array)
+    # brw_array = np.where(brw_array==0, 2000, brw_array)
     hop = 0
     alte_pos = 0
 
@@ -133,6 +134,6 @@ end
 
 if __name__ == '__main__':
     print("Starting")
-    convert("/mnt/HDD/FauBox/Uni/Master/PyCharm/mat2brw_v1/Messung02.11.2020_10-59-15 GUT.dat", "/mnt/HDD/VirtualBox/Windows 10/shared/dat2brw_V9.brw")
+    convert("/mnt/HDD/FauBox/Uni/Master/Semester_3/Brw/test.dat", "/mnt/HDD/VirtualBox/Windows 10/shared/dat2brw_V10.brw")
     print("Finished")
 
