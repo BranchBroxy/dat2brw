@@ -52,7 +52,7 @@ end
     """
 
     Bit = 12
-    MxV = data_raw.max()
+    MxV = 4125
     SIV = 1
     # m = single(M);
     # m = SIV * (m - (2 ^ Bit) / 2) * (MxV * 2 / 2 ^ Bit)
@@ -114,8 +114,10 @@ end
     System = np.array(([1]), dtype=np.int32)
 
     BitDepth = np.array([12], dtype=np.uint8)
-    MaxVolt = np.array([data_raw.max()])
-    MinVolt = np.array([data_raw.min()])
+    MaxVolt = np.array([4125], dtype=np.float64)
+    MinVolt = np.array([-4125], dtype=np.float64)
+    # MaxVolt = np.array([data_raw.max()])
+    # MinVolt = np.array([data_raw.min()])
     NRecFrames_float = Raw.shape[0] / (NCols[0] * NRows[0])
     NRecFrames = np.ones(shape=(1,), dtype="i8")
     NRecFrames[0] = NRecFrames_float
@@ -134,6 +136,6 @@ end
 
 if __name__ == '__main__':
     print("Starting")
-    convert("/mnt/HDD/FauBox/Uni/Master/Semester_3/Brw/test.dat", "/mnt/HDD/VirtualBox/Windows 10/shared/dat2brw_V10.brw")
+    convert("/mnt/HDD/FauBox/Uni/Master/Semester_3/Brw/test1.dat", "/mnt/HDD/VirtualBox/Windows 10/shared/Konvertierte Brw Datein/dat2brw_V12.brw")
     print("Finished")
 
