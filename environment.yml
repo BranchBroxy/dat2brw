@@ -1,4 +1,4 @@
-name: mat2brw
+name: dat2brw
 channels:
   - defaults
 dependencies:
